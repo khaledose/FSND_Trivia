@@ -32,11 +32,10 @@ class TriviaTestCase(unittest.TestCase):
     def tearDown(self):
         """Executed after reach test"""
         pass
-
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
+    
+    '''
+    Tests retrieving paginated questions successfully
+    '''
     def test_get_paginated_questions_success(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
@@ -44,6 +43,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['questions']) <= 10)
 
+    '''
+    Tests getting a question by ID successfully
+    '''
     def test_get_question_success(self):
         res = self.client().get('/questions/2')
         data = json.loads(res.data)
@@ -51,12 +53,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertNotEqual(data['question'],  None)
 
+    '''
+    Tests getting a question by ID that doesn't exist in the database
+    '''
     def test_get_question_not_found(self):
         res = self.client().get('/questions/1000')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
 
+    '''
+    Tests adding new question successfully
+    '''
     def test_post_question_success(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
@@ -72,6 +80,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_questions'] == number_of_questions + 1)
 
+    '''
+    Tests searching for questions based on a search term successfully
+    '''
     def test_search_question_success(self):
         res = self.client().post('/questions', json={'searchTerm': 'africa'})
         data = json.loads(res.data)
@@ -80,12 +91,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
         self.assertTrue(data['questions'])
 
+    '''
+    Tests adding new question with Null json body
+    '''
     def test_search_question_method_not_allowed(self):
         res = self.client().post('/questions', json=None)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
-    
+
+    '''
+    Tests deleting a question by ID successfully
+    '''
     def test_delete_question_success(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
@@ -96,13 +113,19 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(data['deleted_question_id'], '5')
         self.assertTrue(data['total_questions'] == number_of_questions - 1)
-    
+
+    '''
+    Tests deleting a question by ID that doesn't exist in the database
+    '''
     def test_delete_question_not_found(self):
         res = self.client().delete('/questions/1000')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
 
+    '''
+    Tests getting questions related to a category successfully
+    '''
     def test_get_questions_by_category_success(self):
         res = self.client().get('categories/2/questions')
         data = json.loads(res.data)
@@ -112,6 +135,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
 
+    '''
+    Tests getting questions related to a category that doesn't exist
+    '''
     def test_get_questions_by_category_not_found(self):
         res = self.client().get('categories/1000/questions')
         data = json.loads(res.data)

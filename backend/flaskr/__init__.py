@@ -31,6 +31,9 @@ def create_app(test_config=None):
                                 'GET,PATCH,POST,DELETE,OPTIONS')
         return response
 
+    '''
+    Returns all categories
+    '''
     @app.route('/categories', methods=['GET'])
     def get_categories():
         try:
@@ -42,6 +45,9 @@ def create_app(test_config=None):
         except:
             abort(500)
 
+    '''
+    Returns paginated questions (10 questions per page)
+    '''
     @app.route('/questions', methods=['GET'])
     def get_quetsions():
         try:
@@ -57,6 +63,9 @@ def create_app(test_config=None):
         except:
             abort(500)
 
+    '''
+    Returns specific question by ID
+    '''
     @app.route('/questions/<question_id>', methods=['GET'])
     def get_question(question_id):
         try:
@@ -73,6 +82,9 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
+    '''
+    Deletes a question by ID
+    '''
     @app.route('/questions/<question_id>', methods=['DELETE'])
     def delete_question(question_id):
         try:
@@ -93,6 +105,9 @@ def create_app(test_config=None):
         finally:
             db.session.close()
 
+    '''
+    Adds a new question or searches for questions based on search term
+    '''
     @app.route('/questions', methods=['POST'])
     def post_or_search_question():
         try:
@@ -127,6 +142,9 @@ def create_app(test_config=None):
         finally:
             db.session.close()
 
+    '''
+    Returns paginated questions based on the selected category
+    '''
     @app.route('/categories/<category_id>/questions', methods=['GET'])
     def get_quetsions_by_category(category_id):
         try:
@@ -149,6 +167,10 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
+    '''
+    Plays trivia quiz by returning a new random question that 
+    haven't been asked before based on the category of the quiz
+    '''
     @app.route('/quizzes', methods=['POST'])
     def post_quizzes():
         try:
