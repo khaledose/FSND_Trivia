@@ -175,8 +175,10 @@ def create_app(test_config=None):
     def post_quizzes():
         try:
             res = request.get_json()
-            category_ids = [id[0] for id in db.session.query(Category.id).all()]            
+            category_ids = [id[0] for id in db.session.query(Category.id).all()]  
             questions = []
+            res.get('quiz_category', None)['id'] = int(res.get('quiz_category', None)['id'])
+            
             if res.get('quiz_category', None)['id'] == 0:
                 questions = Question.query.filter(
                     Question.id.notin_(res.get('previous_questions'))).all()
