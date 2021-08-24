@@ -144,6 +144,35 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
 
+    def test_post_quiz_success(self):
+        res = self.client().post('/quizzes', json={
+            'quiz_category': {'id': 2, 'type':'Art'},
+            'previous_questions': [16, 18]
+        })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['question'])
+        self.assertEqual(data['question']['category'], 2)
+        self.assertTrue(data['question']['id'] == 17 or data['question']['id'] == 19)
+    
+    def test_post_quiz_bad_request(self):
+        res = self.client().post('/quizzes', json={
+            'previous_questions': [16, 18]
+        })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+
+    def test_post_quiz_unprocessable(self):
+        res = self.client().post('/quizzes', json={
+            'quiz_category': {'id': 100, 'type':'Fiction'},
+            'previous_questions': [1, 2, 3, 4]
+        })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

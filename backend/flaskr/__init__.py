@@ -175,14 +175,16 @@ def create_app(test_config=None):
     def post_quizzes():
         try:
             res = request.get_json()
-            category_ids = db.session.query(Category.id).all()
+            category_ids = [id[0] for id in db.session.query(Category.id).all()]            
             questions = []
             if res.get('quiz_category', None)['id'] == 0:
                 questions = Question.query.filter(
                     Question.id.notin_(res.get('previous_questions'))).all()
-            else:
+            elif res.get('quiz_category', None)['id'] in category_ids:
                 questions = Question.query.filter_by(category=res.get('quiz_category', None)[
                     'id']).filter(Question.id.notin_(res.get('previous_questions'))).all()
+            else:
+                raise Exception
 
             question = random.choice(questions) if questions else None
             response_body = {'success': True}
@@ -193,7 +195,7 @@ def create_app(test_config=None):
         except:
             if 'quiz_category' not in res or 'previous_questions' not in res:
                 abort(422)
-            elif res.get('quiz_category', None) in category_ids:
+            elif res.get('quiz_category', None)['id'] not in category_ids:
                 abort(400)
             else:
                 abort(500)
